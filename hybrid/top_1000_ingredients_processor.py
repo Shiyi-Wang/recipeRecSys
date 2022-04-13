@@ -1,5 +1,4 @@
 import json
-import random
 
 '''
 Generate top 1000 popular ingredients in a total of 6714 ingredients 
@@ -26,5 +25,3 @@ generating = False
 if generating:
     with open('../data/top_ingredients.json', 'w') as f:
         json.dump(random_generate_ingredients_range, f, indent=2)
-
-print(random.choice(random_generate_ingredients_range))
