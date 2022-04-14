@@ -158,6 +158,7 @@ def pass_to_models(may_want_ingredient, similar_taste_weight, unwanted_ingredien
     """
     # not yet finished here
     knn, svd, content_based = [], [], []
+    # current design is every model return 10 results, please take this into account when calling them
     # call knn api -> generate one list
     # call svd api -> generate one list
     # call contentbased(may_want_ingredient) api -> generate one list
