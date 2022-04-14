@@ -31,4 +31,4 @@ def generate_a_random_ingredient():
 
 if __name__ == '__main__':
     print(generate_a_random_ingredient())
-    print(translate_recipe_names([23, 56, 34, 33]))
+    print(translate_recipe_names([23.0, 56.0, 34.0, 88.0]))
