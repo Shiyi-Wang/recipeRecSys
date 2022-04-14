@@ -85,10 +85,19 @@ print(svd_selected)
 # call content-based
 # assume it comes back as name of recipes
 content_based = [137739.0, 35397.0, 42195.0, 261482.0, 112444.0]
-# cleaned_content_based = [item for item in content_based if ]
-#
 
-print(random.choices(list(set(['Coco Oatmeal Honey Cookies'])), k=round(
-    len(content_based) * content_based_weight)))
+unwanted_ingredients = ['chicken', 'criolla']
+cleaned_content_based = set()
+for unwanted in unwanted_ingredients:
+    lowercased_unwanted = str(unwanted).lower()
+    for c in content_based:
+        lowercased_c = str(c).lower()
+        if lowercased_unwanted not in lowercased_c:
+            cleaned_content_based.add(c)
+cleaned_content_based = list(cleaned_content_based)
 
-unwanted_ingredients = ['onion', 'garlic']
+# print(random.choices(list(set(['Coco Oatmeal Honey Cookies'])), k=round(
+#     len(content_based) * content_based_weight)))
+
+
+print(cleaned_content_based)
