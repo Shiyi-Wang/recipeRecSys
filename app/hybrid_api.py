@@ -1,5 +1,6 @@
 import json
 import pickle
+import ast
 
 '''
 This hybrid process mainly works in this way:
@@ -61,55 +62,42 @@ combine_results(knn, svd, content_based, similar_taste_weight, unwanted_ingredie
 file = open("../data/recipes_names.pkl", 'rb')
 rep_names = pickle.load(file)
 
+file = open("../data/id_name.pkl", 'rb')
+id_name = pickle.load(file)
+
+file = open("../data/id_ingredients.pkl", 'rb')
+id_ingredients = pickle.load(file)
+
+file = open("../data/id_steps.pkl", 'rb')
+id_steps = pickle.load(file)
+
 with open('../data/top_ingredients.json') as f:
     random_generate_ingredients_range = json.load(f)
 
 
-def translate_recipe_names(results, rep_names=rep_names):
-    """ 
-    ** No need to interact with this in front-end
-    This is a helper method used for translating the iid of recipes to 
-    its recipe names for the content based list
-    """
-    cleaned_results = set()
-    for r in results:
+def remove_unwanted_ingredients_by_list_of_ids(rep_ids, unwanted_ingredients):
+    unwanted_ingredients = [u.lower() for u in unwanted_ingredients]
+    result = []
+    for r in rep_ids:
         try:
-            rep_names[r]
+            ingredients = id_ingredients[r]
         except KeyError:
             print(
-                "Key error in translating recipe names for content_based result index of " + str(r))
+                "Key error in getting ingredients recipe id: " + str(r))
         else:
-            cleaned_results.add(r)
-    cleaned_results = list(cleaned_results)
-    return [pretty_text(rep_names[r]) for r in cleaned_results]
-
-
-def pretty_text(text):
-    """
-    ** No need to interact with this in front end
-    This is a helper method used in the process of translating recipe names
-    """
-    text = text.replace(" s ", "\'s ")
-    text_split = text.split(" ")
-    text_split = [t.strip().capitalize() for t in text_split if t != '']
-    return " ".join(text_split)
-
-
-def remove_unwanted_ingredients(process_list, unwanted_ingredients):
-    """
-    ** No need to interact with this in front end
-    This is a helper method removing unwanted ingredients in a list
-    """
-    copy_process_list = process_list.copy()
-    for unwanted in unwanted_ingredients:
-        lowercased_unwanted = str(unwanted).lower()
-        for c in copy_process_list:
-            words = c.split(" ")
-            lower_words = [w.lower() for w in words]
-            if lowercased_unwanted in lower_words:
-                process_list.remove(c)
-        copy_process_list = process_list.copy()
-    return
+            ingredients = ast.literal_eval(ingredients)
+            for i in ingredients:
+                word = i.split(' ')
+                error = False
+                for w in word:
+                    if w.lower() in unwanted_ingredients:
+                        error = True
+                        break
+                if error:
+                    break
+            if not error:
+                result.append(r)
+    return result
 
 
 def remove_duplicates(combined_list):
@@ -122,6 +110,23 @@ def remove_duplicates(combined_list):
         if c not in result:
             result.append(c)
     return result
+
+
+def get_name_ingredients_and_steps_by_id(recipe_ids):
+    return_list = []
+    for r in recipe_ids:
+        try:
+            name = id_name[r]
+            ingredients = id_ingredients[r]
+            steps = id_steps[r]
+        except KeyError:
+            print(
+                "Key error in getting name, ingredients and steps for recipe id: " + str(r))
+        else:
+            ingredients = ast.literal_eval(ingredients)
+            steps = ast.literal_eval(steps)
+            return_list.append([name, ingredients, steps])
+    return return_list
 
 
 def generate_a_random_ingredient():
@@ -189,9 +194,12 @@ def combine_results(knn, svd, content_based, similar_taste_weight, unwanted_ingr
     content_based_weight = 1 - knn_weight - svd_weight
 
     # remove "definately unwanted ingredients" from all lists
-    content_based = translate_recipe_names(content_based)
-    for process_list in [knn, svd, content_based]:
-        remove_unwanted_ingredients(process_list, unwanted_ingredients)
+    knn = remove_unwanted_ingredients_by_list_of_ids(
+        knn, unwanted_ingredients)
+    svd = remove_unwanted_ingredients_by_list_of_ids(
+        svd, unwanted_ingredients)
+    content_based = remove_unwanted_ingredients_by_list_of_ids(
+        content_based, unwanted_ingredients)
 
     # select recipes from each list based on the list weight
     # Note we have to make sure we have 10 result from each list
@@ -214,6 +222,7 @@ def combine_results(knn, svd, content_based, similar_taste_weight, unwanted_ingr
 
     # make sure we remove duplicated recipes - small probability colliding
     combined_result = remove_duplicates(combined_result)
+    combined_result = get_name_ingredients_and_steps_by_id(combined_result)
     return combined_result
 
 
@@ -223,6 +232,7 @@ if __name__ == '__main__':
            'chevy s salsa   original recipe',
            'hooters buffalo shrimp',
            'kittencal s greek moussaka']
+    knn = [128494, 224448, 432666, 26554, 88804]
     svd = ['Outback Copycat Alice Springs Chicken',
            'Ensalada Criolla',
            'Amish Triple Butter Biscuits',
@@ -233,7 +243,9 @@ if __name__ == '__main__':
            'Coco Oatmeal Honey Cookies',
            'Creole Watermelon Feta Salad',
            'Grilled Cajun Green Beans']
-    content_based = [137739.0, 35397.0, 42195.0, 35.0, 112444.0]
+    svd = [536363, 536382, 536384, 536436,
+           536476, 536568, 536688, 536729, 536734]
+    content_based = [137739.0, 35397.0, 42195.0, 35.0, 112444.0, 112444]
     '''
     After translation:
     content_based = ['Buttermilk Oat Bread',
@@ -244,4 +256,4 @@ if __name__ == '__main__':
     '''
     print(";)")
     print(combine_results(knn=knn, svd=svd, content_based=content_based,
-                          similar_taste_weight=0.5, unwanted_ingredients=['cake', 'shirmp']))
+                          similar_taste_weight=0.5, unwanted_ingredients=['cheese', 'beans']))
