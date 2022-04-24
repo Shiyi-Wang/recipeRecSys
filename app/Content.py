@@ -36,37 +36,32 @@ from MeanEmbeddingVectorizer import MeanEmbeddingVectorizer
 import nltk
 nltk.download('wordnet')
 class Content:
-    def __init__(self,data_path='RAW_recipes.csv'):
-        self.SEED=42
 
-        self.AUTOTUNE = tf.data.AUTOTUNE
-        parse_data_path=data_path[:-4]+'_parsed.csv'
-        self.data_path=data_path
-        if os.path.isfile(parse_data_path):
-            self.data=pd.read_csv(parse_data_path)
-            self.data['parsed']=self.data['parsed'].apply(lambda x: x[1:-1].split(','))
-        else:
+    def __init__(self, data_path='RAW_recipes.csv'):
+        data = pd.read_csv(data_path)
+        # parse the ingredients for each recipe
+        data['parsed'] = data.ingredients.apply(self.ingredient_parser)
+        self.data=data
 
-            self.data=pd.read_csv(data_path)
-            self.data['parsed'] = self.data.ingredients.apply(self.ingredient_parser)
-            self.data.to_csv(parse_data_path)
-        corpus = self.get_and_sort_corpus(self.data)
+        # get corpus
+        corpus = self.get_and_sort_corpus(data)
         print(f"Length of corpus: {len(corpus)}")
-        # train and save CBOW Word2Vec model
-        # model_path=pathlib.Path('model_cbow.model')
-        # if model_path.is_file():
-        #     print('Find trained model.')
-        #     with model_path.open('r') as fs:
-        #         self.model_cbow=fs.read()
-        # else:
-        self.model_cbow = Word2Vec(
-            corpus, sg=0, workers=1, window=self.get_window(corpus), min_count=1,
-        )
-        self.filepath = Path('model_cbow.model')
-        self.filepath.parent.mkdir(parents=True, exist_ok=True)
-        self.MODELPATH = 'model_cbow.model'
-        if self.model_cbow.save('model_cbow.model'):
-            print("Word2Vec model successfully trained")
+
+        #train and save CBOW Word2Vec model
+        model_path=pathlib.Path('model_cbow.bin')
+        if model_path.is_file():
+            print('Find trained model.')
+            self.model_cbow=Word2Vec.load("model_cbow.bin")
+        else:
+            model_cbow = Word2Vec(
+                corpus, sg=0, workers=1, window=self.get_window(corpus), min_count=1,
+            )
+            filepath = Path('model_cbow.model')
+            filepath.parent.mkdir(parents=True, exist_ok=True)
+            MODELPATH = 'model_cbow.model'
+            if model_cbow.save('model_cbow.bin'):
+                print("Word2Vec model successfully trained")
+            self.model_cbow=model_cbow
 
     def ingredient_parser(self,ingreds):
         '''
@@ -156,12 +151,16 @@ class Content:
                 ingred_list.append(' '.join(items))
 
         return ingred_list
-
+    def remove(self,x):
+        return x.replace('[','').replace('\'','').replace(']','')
     def get_and_sort_corpus(self,data):
         corpus_sorted = []
+        c=0
         for doc in data.parsed.values:
-            doc.sort()
+
+            doc=list(map(self.remove,doc))
             corpus_sorted.append(doc)
+
         return corpus_sorted
 
     # calculate average length of each document
@@ -194,16 +193,18 @@ class Content:
         # order the scores with and filter to get the highest N scores
         top = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:N]
         # create dataframe to load in recommendations
-        recommendation = pd.DataFrame(columns=["recipe", "ingredients", "score", "url"])
+        recommendation = pd.DataFrame(columns=["id","recipe", "ingredients", "score", "n_steps","steps"])
         count = 0
         for i in top:
+            recommendation.at[count, "id"] = df_recipes["id"][i]
             recommendation.at[count, "recipe"] = self.title_parser(df_recipes["name"][i])
             recommendation.at[count, "ingredients"] = self.ingredient_parser_final(
                 df_recipes["ingredients"][i]
             )
             # recommendation.at[count, "url"] = df_recipes["recipe_urls"][i]
             recommendation.at[count, "score"] = f"{scores[i]}"
-            recommendation.at[count, "id"] = df_recipes["id"][i]
+            recommendation.at[count, "n_steps"] = df_recipes["n_steps"][i]
+            recommendation.at[count, "steps"] = df_recipes["steps"][i]
             count += 1
         return recommendation
 
@@ -248,12 +249,15 @@ class Content:
         # parse ingredient list
         input = self.ingredient_parser(input)
         # get embeddings for ingredient doc
+
         if mean:
             input_embedding = mean_vec_tr.transform([input])[0].reshape(1, -1)
         else:
             input_embedding = tfidf_vec_tr.transform([input])[0].reshape(1, -1)
 
         # get cosine similarity between input embedding and all the document embeddings
+
+
         cos_sim = map(lambda x: cosine_similarity(input_embedding, x)[0][0], doc_vec)
         scores = list(cos_sim)
         # Filter top N recommendations
