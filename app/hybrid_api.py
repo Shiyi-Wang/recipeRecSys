@@ -1,6 +1,9 @@
 import json
 import pickle
 import ast
+import svd_api
+import knn_api
+from Content import Content
 
 '''
 This hybrid process mainly works in this way:
@@ -136,7 +139,7 @@ def generate_a_random_ingredient():
     return random.choice(random_generate_ingredients_range)
 
 
-def pass_to_models(may_want_ingredient, similar_taste_weight, unwanted_ingredients):
+def pass_to_models(user_id, user_rated_iids, may_want_ingredient, similar_taste_weight, unwanted_ingredients):
     """
     *** Main interact hit point for calling knn, svd, content_based api to 
     to generate three lists and pass to combine_results(..) for an optimal
@@ -163,10 +166,15 @@ def pass_to_models(may_want_ingredient, similar_taste_weight, unwanted_ingredien
     """
     # not yet finished here
     knn, svd, content_based = [], [], []
-    # current design is every model return 10 results, please take this into account when calling them
     # call knn api -> generate one list
+    knn = knn_api.recommend(
+        userId=user_id, num_similar_users=5, num_recipes_recommended=10)
     # call svd api -> generate one list
+    svd = svd_api.get_n_predictions(iids=user_rated_iids,
+                                    algo=svd_api.SVD_algo, uid=user_id)
     # call contentbased(may_want_ingredient) api -> generate one list
+    c = Content('../data/RAW_recipes.csv')
+    content_based = c.get_recs(may_want_ingredient, N=10).id.values.tolist()
     return combine_results(knn, svd, content_based, similar_taste_weight, unwanted_ingredients)
 
 
@@ -181,12 +189,13 @@ def combine_results(knn, svd, content_based, similar_taste_weight, unwanted_ingr
         svd (list): list of recipe names by svd
         content_based (list): list of recipe iids by content based
         similar_taste_weight (_type_): a frontend feedback value
-        unwanted_ingredients (_type_): a frontend feedback value
+        unwanted_ingredients (_type_): a frontend feedback value - string
 
     Returns:
         list of recipe names: a final recommendation list that should be 
         sent to the frontend for user to see their recommended recipes by the system.
     """
+    unwanted_ingredients = unwanted_ingredients.split(', ')
 
     # calculate weights for different model based on similar_taste_weight specified by the user
     knn_weight = similar_taste_weight / 2
@@ -254,6 +263,5 @@ if __name__ == '__main__':
                      "Wyatt Cafeteria's Baked Eggplant Aubergine",
                      'Simple Arroz Con Pollo']
     '''
-    print(";)")
-    print(combine_results(knn=knn, svd=svd, content_based=content_based,
-                          similar_taste_weight=0.5, unwanted_ingredients=['cheese', 'beans']))
+    print(pass_to_models(user_id=3787, user_rated_iids=[
+        16642, 5840, 16580, 13811], may_want_ingredient='tomato, chicken, celery', similar_taste_weight=0.5, unwanted_ingredients='celery, potato'))
