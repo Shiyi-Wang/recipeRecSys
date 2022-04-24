@@ -2,3 +2,7 @@
 SVD_algo.pkl
 processed_data.pkl
 __pycache__
+KNN_algo.pkl
+recipe_names.pkl
+recipes.csv
+interactions.csv
