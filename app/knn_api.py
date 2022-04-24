@@ -4,7 +4,7 @@ import numpy as np
 from pprint import pprint
 
 data = pd.read_pickle('../data/processed_data.pkl')
-data = data.drop(data.index[150000:])
+data = data.drop(data.index[50000:])
 tmat = data.pivot_table(index='user_id', columns='recipe_id',
                         values='rating').fillna(0)
 
