@@ -1,57 +1,55 @@
+from MeanEmbeddingVectorizer import MeanEmbeddingVectorizer
+from TfidfEmbeddingVectorizer import TfidfEmbeddingVectorizer
+from pathlib import Path
+from tensorflow.keras import layers
+import tensorflow as tf
+import numpy as np
+from collections import defaultdict
+from sklearn.metrics.pairwise import cosine_similarity
+import tqdm
+import io
+from gensim.models import Word2Vec
+from sklearn.metrics.pairwise import linear_kernel
+from sklearn.feature_extraction.text import TfidfVectorizer
+from flask import current_app
+import redis
+import time
+from collections import Counter
+from nltk.corpus import wordnet
+from nltk.stem import WordNetLemmatizer
+import unidecode
+import re
+import ast
+import string
 import os.path
 import pathlib
 
 import pandas as pd
 import nltk
-import string
-import ast
-import re
-import unidecode
+nltk.download('omw-1.4')
 # nltk.download('wordnet')
-from nltk.stem import WordNetLemmatizer
-from nltk.corpus import wordnet
-from collections import Counter
-import time
-import redis
-from flask import current_app
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import linear_kernel
-from gensim.models import Word2Vec
-import io
-import string
-import tqdm
-from sklearn.metrics.pairwise import cosine_similarity
-from collections import defaultdict
-import numpy as np
-
-import tensorflow as tf
-from tensorflow.keras import layers
-from pathlib import Path
-
-from TfidfEmbeddingVectorizer import TfidfEmbeddingVectorizer
-from MeanEmbeddingVectorizer import MeanEmbeddingVectorizer
 
 
-
-import nltk
 nltk.download('wordnet')
+
+
 class Content:
 
     def __init__(self, data_path='RAW_recipes.csv'):
         data = pd.read_csv(data_path)
         # parse the ingredients for each recipe
         data['parsed'] = data.ingredients.apply(self.ingredient_parser)
-        self.data=data
+        self.data = data
 
         # get corpus
         corpus = self.get_and_sort_corpus(data)
         print(f"Length of corpus: {len(corpus)}")
 
-        #train and save CBOW Word2Vec model
-        model_path=pathlib.Path('model_cbow.bin')
+        # train and save CBOW Word2Vec model
+        model_path = pathlib.Path('model_cbow.bin')
         if model_path.is_file():
             print('Find trained model.')
-            self.model_cbow=Word2Vec.load("model_cbow.bin")
+            self.model_cbow = Word2Vec.load("model_cbow.bin")
         else:
             model_cbow = Word2Vec(
                 corpus, sg=0, workers=1, window=self.get_window(corpus), min_count=1,
@@ -61,9 +59,9 @@ class Content:
             MODELPATH = 'model_cbow.model'
             if model_cbow.save('model_cbow.bin'):
                 print("Word2Vec model successfully trained")
-            self.model_cbow=model_cbow
+            self.model_cbow = model_cbow
 
-    def ingredient_parser(self,ingreds):
+    def ingredient_parser(self, ingreds):
         '''
 
         This function takes in a list (but it is a string as it comes from pandas dataframe) of
@@ -151,25 +149,27 @@ class Content:
                 ingred_list.append(' '.join(items))
 
         return ingred_list
-    def remove(self,x):
-        return x.replace('[','').replace('\'','').replace(']','')
-    def get_and_sort_corpus(self,data):
+
+    def remove(self, x):
+        return x.replace('[', '').replace('\'', '').replace(']', '')
+
+    def get_and_sort_corpus(self, data):
         corpus_sorted = []
-        c=0
+        c = 0
         for doc in data.parsed.values:
 
-            doc=list(map(self.remove,doc))
+            doc = list(map(self.remove, doc))
             corpus_sorted.append(doc)
 
         return corpus_sorted
 
     # calculate average length of each document
-    def get_window(self,corpus):
+    def get_window(self, corpus):
         lengths = [len(doc) for doc in corpus]
         avg_len = float(sum(lengths)) / len(lengths)
         return round(avg_len)
 
-    def ingredient_parser_final(self,ingredient):
+    def ingredient_parser_final(self, ingredient):
         if isinstance(ingredient, list):
             ingredients = ingredient
         else:
@@ -179,11 +179,11 @@ class Content:
         ingredients = unidecode.unidecode(ingredients)
         return ingredients
 
-    def title_parser(self,title):
+    def title_parser(self, title):
         title = unidecode.unidecode(title)
         return title
 
-    def get_recommendations(self,N, scores):
+    def get_recommendations(self, N, scores):
         """
         Rank scores and output a pandas data frame containing all the details of the top N recipes.
         :param scores: list of cosine similarities
@@ -191,13 +191,16 @@ class Content:
         # load in recipe dataset
         df_recipes = self.data
         # order the scores with and filter to get the highest N scores
-        top = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:N]
+        top = sorted(range(len(scores)),
+                     key=lambda i: scores[i], reverse=True)[:N]
         # create dataframe to load in recommendations
-        recommendation = pd.DataFrame(columns=["id","recipe", "ingredients", "score", "n_steps","steps"])
+        recommendation = pd.DataFrame(
+            columns=["id", "recipe", "ingredients", "score", "n_steps", "steps"])
         count = 0
         for i in top:
             recommendation.at[count, "id"] = df_recipes["id"][i]
-            recommendation.at[count, "recipe"] = self.title_parser(df_recipes["name"][i])
+            recommendation.at[count, "recipe"] = self.title_parser(
+                df_recipes["name"][i])
             recommendation.at[count, "ingredients"] = self.ingredient_parser_final(
                 df_recipes["ingredients"][i]
             )
@@ -208,7 +211,7 @@ class Content:
             count += 1
         return recommendation
 
-    def get_recs(self,ingredients, N=5, mean=False):
+    def get_recs(self, ingredients, N=5, mean=False):
         """
         Get the top N recipe recomendations.
         :param ingredients: comma seperated string listing ingredients
@@ -257,8 +260,8 @@ class Content:
 
         # get cosine similarity between input embedding and all the document embeddings
 
-
-        cos_sim = map(lambda x: cosine_similarity(input_embedding, x)[0][0], doc_vec)
+        cos_sim = map(lambda x: cosine_similarity(
+            input_embedding, x)[0][0], doc_vec)
         scores = list(cos_sim)
         # Filter top N recommendations
         recommendations = self.get_recommendations(N, scores)
