@@ -1,3 +1,0 @@
-id_ingredients.pkl filter=lfs diff=lfs merge=lfs -text
-id_name.pkl filter=lfs diff=lfs merge=lfs -text
-id_steps.pkl filter=lfs diff=lfs merge=lfs -text
