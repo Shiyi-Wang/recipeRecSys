@@ -5,7 +5,7 @@ from pprint import pprint
 
 data = pd.read_pickle('../data/processed_data.pkl')
 data = data.drop(data.index[150000:])
-tmat = data.pivot_table(index='user_id', columns='name',
+tmat = data.pivot_table(index='user_id', columns='recipe_id',
                         values='rating').fillna(0)
 
 knn = NearestNeighbors(metric='cosine', algorithm='brute')
