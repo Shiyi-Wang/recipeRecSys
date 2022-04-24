@@ -1,3 +1,4 @@
 .DS_Store
 SVD_algo.pkl
 processed_data.pkl
+__pycache__
