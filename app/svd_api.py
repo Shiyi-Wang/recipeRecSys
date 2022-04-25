@@ -25,6 +25,7 @@ def get_recipe_similar_score(iids, U=rep_U):
     return users_to_rec, user_sim_score
 '''
 
+
 def get_n_predictions(iids, algo=SVD_algo, n=10, uid=3787):
 
     iid_to_test = [iid for iid in range(139684) if iid not in iids]
@@ -32,7 +33,8 @@ def get_n_predictions(iids, algo=SVD_algo, n=10, uid=3787):
     predictions = algo.test(test_set)
     pred_ratings = [pred.est for pred in predictions]
     top_n = np.argpartition(pred_ratings, 1)[-n:]
-    return top_n
+    return top_n.tolist()
+
 
 '''
 def translate_recipe_names(results, rep_names=rep_names):
@@ -48,4 +50,4 @@ def refactorRecipeNames(text):
 
 if __name__ == '__main__':
     print(get_n_predictions(iids=[16642, 5840, 16580, 13811],
-                      algo=SVD_algo, uid=3787))
+                            algo=SVD_algo, uid=3787))

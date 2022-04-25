@@ -43,6 +43,7 @@ def getRecommendations(num_recipes_recommended, avg_rating, userId):
             break
 
     pprint(recommended_recipes)
+    return recommended_recipes
 
 
 def recommend(userId, num_similar_users, num_recipes_recommended):
