@@ -1,8 +1,8 @@
 import json
 import pickle
 import ast
-import svd_api
-import knn_api
+# import svd_api
+# import knn_api
 from Content import Content
 
 '''

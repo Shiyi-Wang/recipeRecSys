@@ -50,4 +50,4 @@ def hard_case():
 
 
 if __name__ == '__main__':
-    avg_case()
+    easy_case()
