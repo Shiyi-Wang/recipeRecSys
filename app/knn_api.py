@@ -61,7 +61,7 @@ def recommend(userId, num_similar_users, num_recipes_recommended):
                   tmat.values[neigh_users_ind]).sum(axis=0)
     print("Based on other users rating, we recommend:")
 
-    getRecommendations(num_recipes_recommended, avg_rating, userId)
+    return getRecommendations(num_recipes_recommended, avg_rating, userId)
 
 
 if __name__ == '__main__':

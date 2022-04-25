@@ -1,8 +1,8 @@
 import json
 import pickle
 import ast
-# import svd_api
-# import knn_api
+import svd_api
+import knn_api
 from Content import Content
 
 '''
@@ -61,9 +61,6 @@ combine_results(knn, svd, content_based, similar_taste_weight, unwanted_ingredie
         content_based(tomato, cheese) -> 0.2
     final result order: knn_result -> svd_result -> content_based_result
 '''
-
-file = open("../data/recipes_names.pkl", 'rb')
-rep_names = pickle.load(file)
 
 file = open("../data/id_name.pkl", 'rb')
 id_name = pickle.load(file)
