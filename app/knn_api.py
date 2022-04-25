@@ -64,4 +64,4 @@ def recommend(userId, num_similar_users, num_recipes_recommended):
 
 
 if __name__ == '__main__':
-    recommend(userId = 3787, num_similar_users = 5, num_recipes_recommended = 10)
+    recommend(userId=3787, num_similar_users=5, num_recipes_recommended=10)
