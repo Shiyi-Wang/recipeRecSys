@@ -1,8 +1,8 @@
 import json
 import pickle
 import ast
-import svd_api
-import knn_api
+# import svd_api
+# import knn_api
 from Content import Content
 
 '''
@@ -139,6 +139,29 @@ def generate_a_random_ingredient():
     return random.choice(random_generate_ingredients_range)
 
 
+def advanced_pass_to_models(user_id, user_rated_iids, may_want_ingredient, similar_taste_weight, unwanted_ingredients, num_of_recommendation):
+    knn, svd, content_based = [], [], []
+    # optimization on speed
+    if (similar_taste_weight != 0):
+        # call knn api -> generate one list
+        knn = knn_api.recommend(
+            userId=user_id, num_similar_users=5, num_recipes_recommended=num_of_recommendation)
+        print("knn result")
+        print(knn)
+        # call svd api -> generate one list
+        svd = svd_api.get_n_predictions(iids=user_rated_iids,
+                                        algo=svd_api.SVD_algo, n=num_of_recommendation, uid=user_id)
+        print("svd result")
+        print(svd)
+    # call contentbased(may_want_ingredient) api -> generate one list
+    c = Content('../data/RAW_recipes.csv')
+    content_based = c.get_recs(
+        may_want_ingredient, N=num_of_recommendation).id.values.tolist()
+    print('content based result')
+    print(content_based)
+    return combine_results(knn, svd, content_based, similar_taste_weight, unwanted_ingredients)
+
+
 def pass_to_models(user_id, user_rated_iids, may_want_ingredient, similar_taste_weight, unwanted_ingredients):
     """
     *** Main interact hit point for calling knn, svd, content_based api to 
@@ -164,17 +187,24 @@ def pass_to_models(user_id, user_rated_iids, may_want_ingredient, similar_taste_
         list of recipe names: a final recommendation list that should be 
         sent to the frontend for user to see their recommended recipes by the system.
     """
-    # not yet finished here
     knn, svd, content_based = [], [], []
-    # call knn api -> generate one list
-    knn = knn_api.recommend(
-        userId=user_id, num_similar_users=5, num_recipes_recommended=10)
-    # call svd api -> generate one list
-    svd = svd_api.get_n_predictions(iids=user_rated_iids,
-                                    algo=svd_api.SVD_algo, uid=user_id)
+    # optimization on speed
+    if (similar_taste_weight != 0):
+        # call knn api -> generate one list
+        knn = knn_api.recommend(
+            userId=user_id, num_similar_users=5, num_recipes_recommended=10)
+        print("knn result")
+        print(knn)
+        # call svd api -> generate one list
+        svd = svd_api.get_n_predictions(iids=user_rated_iids,
+                                        algo=svd_api.SVD_algo, uid=user_id)
+        print("svd result")
+        print(svd)
     # call contentbased(may_want_ingredient) api -> generate one list
     c = Content('../data/RAW_recipes.csv')
     content_based = c.get_recs(may_want_ingredient, N=10).id.values.tolist()
+    print("content_based result")
+    print(content_based)
     return combine_results(knn, svd, content_based, similar_taste_weight, unwanted_ingredients)
 
 
@@ -214,7 +244,8 @@ def combine_results(knn, svd, content_based, similar_taste_weight, unwanted_ingr
     # Note we have to make sure we have 10 result from each list
     knn_selected = knn[:round(10 * knn_weight)]
     svd_selected = svd[:round(10 * svd_weight)]
-    content_based_selected = content_based[:round(10 * content_based_weight)]
+    content_based_selected = content_based[:round(
+        10 * content_based_weight)]
 
     # combine the three lists in the order of list weights
     pairing = [(knn_selected, knn_weight), (svd_selected, svd_weight),
@@ -231,6 +262,7 @@ def combine_results(knn, svd, content_based, similar_taste_weight, unwanted_ingr
 
     # make sure we remove duplicated recipes - small probability colliding
     combined_result = remove_duplicates(combined_result)
+    print(combined_result)
     combined_result = get_name_ingredients_and_steps_by_id(combined_result)
     return combined_result
 
@@ -263,5 +295,29 @@ if __name__ == '__main__':
                      "Wyatt Cafeteria's Baked Eggplant Aubergine",
                      'Simple Arroz Con Pollo']
     '''
-    print(pass_to_models(user_id=3787, user_rated_iids=[
-        16642, 5840, 16580, 13811], may_want_ingredient='tomato, chicken, celery', similar_taste_weight=0.5, unwanted_ingredients='celery, potato'))
+    # print(pass_to_models(user_id=3787, user_rated_iids=[
+    #     16642, 5840, 16580, 13811], may_want_ingredient='tomato, chicken, celery', similar_taste_weight=0.5, unwanted_ingredients='celery, potato'))
+
+    # result = combine_results(knn=knn, svd=svd, content_based=content_based,
+    #                          similar_taste_weight=0.6, unwanted_ingredients='onion, garlic, chicken')
+
+    # list_of_dict = []
+    # for one_rep in result:
+    #     dictionary = {}
+    #     dictionary['name'] = one_rep[0]
+    #     dictionary['inglist'] = one_rep[1]
+    #     dictionary['step'] = one_rep[2]
+    #     list_of_dict.append(dictionary)
+    # print(len(list_of_dict))
+    # print(list_of_dict)
+    knn = [130403, 52424, 83971, 10291, 36581,
+           43817, 43768, 43724, 43728, 43746]
+    svd = [139670, 139671, 139672, 139673, 139674,
+           139675, 139676, 139677, 139678, 139679]
+    c = Content('../data/RAW_recipes.csv')
+    content_based = c.get_recs(
+        'beef, pork, egg, milk, chili, squash, bok choy, butter', N=25).id.values.tolist()
+
+    result = combine_results(knn=knn, svd=svd, content_based=content_based,
+                             similar_taste_weight=0.2, unwanted_ingredients='celery, cinnamon')
+    print(len(result))
