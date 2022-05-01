@@ -2,10 +2,10 @@
 Built with ❤️ by [Shiyi Wang](mailto:swang793@gatech.edu), [Shuangyue Cheng](mailto:katcheng@gatech.edu), [Taichang Zhou](mailto:tzhou915@gatech.edu), [Shuyan Lin](mailto:slin915@gatech.edu), [Haoran Zhao](mailto:hzhao353@gatech.edu)
 
 ## Table of Contents
-- [Introduction](#Introduction)
-- [Getting Started](#GettingStarted)
-- [Backend Executables](#GettingStarted)
-- [Final Executables](#GettingStarted)
+- [Introduction](#introduction)
+- [Getting Started](#getting-started)
+- [Backend Executables](#backend-executables)
+- [Final Executables](#final-executable)
 
 ## Introduction
 We present Thursday, a Transparent Hybrid User-adjustable Recipe recommender System. The training dataset is [Food.com Recipes and Interactions](https://www.kaggle.com/datasets/shuyangli94/food-com-recipes-and-user-interactions?select=RAW_recipes.csv) from Kaggle.
