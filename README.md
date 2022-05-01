@@ -5,7 +5,7 @@ Built with passion by [Shiyi Wang](mailto:swang793@gatech.edu), [Shuangyue Cheng
 - [Introduction](#introduction)
 - [Getting Started](#getting-started)
 - [Backend Executables](#backend-executables)
-- [Final Executables](#final-executable)
+- [Final Executable](#final-executable)
 
 ## Introduction
 We present Thursday, a Transparent Hybrid User-adjustable Recipe recommender System.
