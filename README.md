@@ -1,5 +1,5 @@
 # Thursday -  A CS 4675 Project
-Built with ❤️ by [Shiyi Wang](mailto:swang793@gatech.edu), [Shuangyue Cheng](mailto:katcheng@gatech.edu), [Taichang Zhou](mailto:tzhou915@gatech.edu), [Shuyan Lin](mailto:slin915@gatech.edu), [Haoran Zhao](mailto:hzhao353@gatech.edu)
+Built with passion by [Shiyi Wang](mailto:swang793@gatech.edu), [Shuangyue Cheng](mailto:katcheng@gatech.edu), [Taichang Zhou](mailto:tzhou915@gatech.edu), [Shuyan Lin](mailto:slin915@gatech.edu), [Haoran Zhao](mailto:hzhao353@gatech.edu)
 
 ## Table of Contents
 - [Introduction](#introduction)
@@ -8,7 +8,14 @@ Built with ❤️ by [Shiyi Wang](mailto:swang793@gatech.edu), [Shuangyue Cheng]
 - [Final Executables](#final-executable)
 
 ## Introduction
-We present Thursday, a Transparent Hybrid User-adjustable Recipe recommender System. The training dataset is [Food.com Recipes and Interactions](https://www.kaggle.com/datasets/shuyangli94/food-com-recipes-and-user-interactions?select=RAW_recipes.csv) from Kaggle.
+We present Thursday, a Transparent Hybrid User-adjustable Recipe recommender System.
+
+This project offers the following features to address the state-of-the-art recommender system problems:
+
+1. It utlizes Content-based Collaborative Filtering (CBCF) technique to offer optimized recommendation choices.
+2. It leverages algorithm transparency and flexibility with user-adjustable weights.
+
+The training dataset is [Food.com Recipes and Interactions](https://www.kaggle.com/datasets/shuyangli94/food-com-recipes-and-user-interactions?select=RAW_recipes.csv) from Kaggle.
 
 ## Getting Started
 
@@ -105,7 +112,7 @@ jupyter notebook Collaborative\ Filtering\ with\ SVD.ipynb
 
 [Link to external Google Colab](https://colab.research.google.com/drive/1eq5x3gYnl_-8Rszju_L9TFl5tnpFkhB8)
 
-> Note: modifications has been made on the API implementation 
+> Note: Modifications has been made on the final API.
 
 ### Evaluation Module Executables
 
@@ -119,3 +126,5 @@ Option 1: View Jupyter Notebook HTML snapshots.
 Option 2: Run Jupyter Notebooks in <code>evaluations</code> directory.
 
 ## Final Executable
+
+TBA
