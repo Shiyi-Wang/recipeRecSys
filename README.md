@@ -126,21 +126,16 @@ Option 1: View Jupyter Notebook HTML snapshots.
 Option 2: Run Jupyter Notebooks in <code>evaluations</code> directory.
 
 
-## Frontend Executables
-*Step 1:Download the folder "Frontend".
+## Final Executable
 
-*Step 2:Go to the directory of "./Frontend" folder in cmd and install the npm by  
+1. In  <code>frontend</code> directory, install [npm](https://www.npmjs.com/) by 
 
 ```sh
 npm install
 ```
 
-*Step 3:Open the react app by 
+2. Open the react app by 
 
 ```sh
 npm start
 ```
-
-## Final Executable
-
-TBA
