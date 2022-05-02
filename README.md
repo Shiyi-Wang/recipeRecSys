@@ -32,9 +32,10 @@ $ conda env create -f thursday.yml
 $ conda activate thursday
 ```
 3.seting up
-``sh
+
+```sh
 $ pip install -e .
-``
+```
 
 4. To deactivate an active environment, use
 ```sh
