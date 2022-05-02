@@ -31,7 +31,7 @@ $ conda env create -f thursday.yml
 ```sh
 $ conda activate thursday
 ```
-3.seting up
+3. Set up web app dependencies, use
 
 ```sh
 $ pip install -e .
