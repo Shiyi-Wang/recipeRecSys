@@ -139,7 +139,7 @@ Option 2: Run Jupyter Notebooks in <code>evaluations</code> directory.
 In <code>demo</code>, run <code>demo.py</code>
 > Note: demo.py has a default <code>easy_case</code> demo as called in <code>main</code>.
 
-Feel free to change it to other cases method defined in <code>demo.py</code> as you wish.
+You may switch with other cases defined in <code>demo.py</code>.
 
 ```sh
 cd demo
@@ -147,7 +147,7 @@ python3 demo.py
 ```
 
 ## Final Executable
-1. First run  Backend server by
+1. First run backend server by
 
 ```sh
 cd recommender-server
