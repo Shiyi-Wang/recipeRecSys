@@ -125,6 +125,11 @@ Option 1: View Jupyter Notebook HTML snapshots.
 
 Option 2: Run Jupyter Notebooks in <code>evaluations</code> directory.
 
+
+## Backend Executables
+Step 1:Download the folder "Frontend"
+Step 2:Go to the directory of "./Frontend" and instal the npm by 
+
 ## Final Executable
 
 TBA
