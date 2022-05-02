@@ -34,7 +34,7 @@ $ conda activate thursday
 3.seting up
 ``sh
 $ pip install -e .
-```
+``
 
 4. To deactivate an active environment, use
 ```sh
