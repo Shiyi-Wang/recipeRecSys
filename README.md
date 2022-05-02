@@ -52,12 +52,17 @@ $ conda deactivate
 ```sh
 .
 ├── SVD_algo.pkl
+├── SVD_ratings.pkl
 ├── ingredients.json
 ├── interactions.csv
 ├── processed_data.pkl
 ├── recipes.csv
 ├── recipes_names.pkl
 └── top_ingredients.json
+└── id_ingredients.pkl
+└── id_name.pkl
+└── id_steps.pkl
+└── RAW_recipes.csv
 ```
 
 ## Backend Executables
@@ -130,6 +135,15 @@ Option 1: View Jupyter Notebook HTML snapshots.
 
 Option 2: Run Jupyter Notebooks in <code>evaluations</code> directory.
 
+## Backend Hybrid API Demo
+Get into demo folder and run <code>demo.py</code>
+Note: demo.py has a default <code>easy_case</code> demo as called in <code>main</code>.
+Feel free to change it to other cases method defined in <code>demo.py</code> as you wish
+
+```sh
+cd demo
+python3 demo.py
+```
 
 ## Final Executable
 1. first run the back end server by
