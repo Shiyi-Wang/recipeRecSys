@@ -127,14 +127,21 @@ Option 2: Run Jupyter Notebooks in <code>evaluations</code> directory.
 
 
 ## Final Executable
+1. first run the back end server by
 
-1. In  <code>frontend</code> directory, install [npm](https://www.npmjs.com/) by 
+```sh
+cd recommender-server
+python3 recipe.py
+```
+
+
+2. In  <code>frontend</code> directory, install [npm](https://www.npmjs.com/) by 
 
 ```sh
 npm install
 ```
 
-2. Open the react app by 
+3. Open the react app by 
 
 ```sh
 npm start
