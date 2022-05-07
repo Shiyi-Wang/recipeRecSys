@@ -130,6 +130,8 @@ Option 1: View Jupyter Notebook HTML snapshots.
 
 Option 2: Run Jupyter Notebooks in <code>evaluations</code> directory.
 
+## Final Executable
+
 ### Hybrid API Demo
 In <code>demo</code>, run <code>demo.py</code>
 > Note: demo.py has a default <code>easy_case</code> demo as called in <code>main</code>.
