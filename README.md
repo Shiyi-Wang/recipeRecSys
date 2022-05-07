@@ -31,13 +31,8 @@ $ conda env create -f thursday.yml
 ```sh
 $ conda activate thursday
 ```
-3. Set up web app dependencies, use
 
-```sh
-$ pip install -e .
-```
-
-4. To deactivate an active environment, use
+3. To deactivate an active environment, use
 ```sh
 $ conda deactivate
 ```
@@ -144,24 +139,4 @@ You may switch with other cases defined in <code>demo.py</code>.
 ```sh
 cd demo
 python3 demo.py
-```
-
-## Final Executable
-1. First run backend server by
-
-```sh
-cd recommender-server
-python3 recipe.py
-```
-
-2. In  <code>frontend</code> directory, install [npm](https://www.npmjs.com/) by 
-
-```sh
-npm install
-```
-
-3. Open the react app by 
-
-```sh
-npm start
 ```
